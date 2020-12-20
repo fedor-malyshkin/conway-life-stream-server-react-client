@@ -1,0 +1,101 @@
+ext {
+    // SPRING_VERSION
+    SPRING_VER = '2.4.1'
+
+    LOMBOK_VER = '1.18.16'
+
+// logging
+    SLF4J_VER = '1.7.30'
+    LOGBACK_VER = '1.2.3'
+
+// test
+    TEST_JUNIT_VER = '4.12'
+    TEST_MOCKITO_VER = '2.21.0'
+    TEST_ASSERTJ_VER = '3.11.0'
+    TEST_JSONASSERT_VER = '1.5.0'
+}
+
+
+// project dependencies
+buildscript {
+    ext {
+        SPRING_PLUGIN_VER = '2.4.1'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${SPRING_PLUGIN_VER}"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+
+
+java {
+//    toolchain {
+//        languageVersion = JavaLanguageVersion.of(13)
+//    }
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compileOnly "org.projectlombok:lombok:${LOMBOK_VER}"
+    annotationProcessor "org.projectlombok:lombok:${LOMBOK_VER}"
+
+    testCompileOnly "org.projectlombok:lombok:${LOMBOK_VER}"
+    testAnnotationProcessor "org.projectlombok:lombok:${LOMBOK_VER}"
+
+// spring web-starter
+    implementation "org.springframework.boot:spring-boot-starter-webflux:${SPRING_VER}"
+
+// live reload
+    developmentOnly "org.springframework.boot:spring-boot-devtools:${SPRING_VER}"
+
+    // Logging
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: "${SLF4J_VER}"
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: "${LOGBACK_VER}"
+
+    // spring testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+
+    // testing
+    testImplementation "junit:junit:${TEST_JUNIT_VER}"
+    testImplementation "org.mockito:mockito-core:${TEST_MOCKITO_VER}"
+    testImplementation "org.assertj:assertj-core:${TEST_ASSERTJ_VER}"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    classifier = 'boot'
+}
+
+mainClassName = "ru.fedor.conway.life.stream.client.reactor.Application"
+
+application {
+    mainClass = mainClassName
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
