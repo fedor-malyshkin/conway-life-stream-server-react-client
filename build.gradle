@@ -1,6 +1,8 @@
 ext {
     // SPRING_VERSION
     SPRING_VER = '2.4.1'
+    REACTOR_VER = '2020.0.2'
+    COMMONS_MATH_VER = '3.6.1'
 
     LOMBOK_VER = '1.18.16'
 
@@ -9,9 +11,9 @@ ext {
     LOGBACK_VER = '1.2.3'
 
 // test
-    TEST_JUNIT_VER = '4.12'
-    TEST_MOCKITO_VER = '2.21.0'
-    TEST_ASSERTJ_VER = '3.11.0'
+    TEST_JUNIT_VER = '5.7.0'
+    TEST_MOCKITO_VER = '3.6.28'
+    TEST_ASSERTJ_VER = '3.18.1'
     TEST_JSONASSERT_VER = '1.5.0'
 }
 
@@ -59,22 +61,27 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:${LOMBOK_VER}"
     testAnnotationProcessor "org.projectlombok:lombok:${LOMBOK_VER}"
 
-// spring web-starter
+    // spring web-starter
     implementation "org.springframework.boot:spring-boot-starter-webflux:${SPRING_VER}"
 
-// live reload
-    developmentOnly "org.springframework.boot:spring-boot-devtools:${SPRING_VER}"
+    implementation platform("io.projectreactor:reactor-bom:${REACTOR_VER}")
+    implementation 'io.projectreactor:reactor-core'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-math3
+    compile group: 'org.apache.commons', name: 'commons-math3', version: "${COMMONS_MATH_VER}"
+
 
     // Logging
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "${SLF4J_VER}"
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: "${LOGBACK_VER}"
 
     // spring testing
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${SPRING_VER}"
     testImplementation 'io.projectreactor:reactor-test'
 
     // testing
-    testImplementation "junit:junit:${TEST_JUNIT_VER}"
+    testImplementation platform("org.junit:junit-bom:${TEST_JUNIT_VER}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation "org.mockito:mockito-core:${TEST_MOCKITO_VER}"
     testImplementation "org.assertj:assertj-core:${TEST_ASSERTJ_VER}"
 }
@@ -99,3 +106,15 @@ configurations {
     }
 }
 
+// enable PREVIEW features
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+}
+
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+}
