@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-dir
-          path: build/
+          path: build/libs
           retention-days: 7
       - name: run-tests
         run: ./gradlew test
@@ -56,7 +56,7 @@ jobs:
         with:
           report_individual_runs: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          files: test-results/**/*.xml
+          files: build/test-results/**/*.xml
   deploy:
     runs-on: ubuntu-18.04
     needs: build-test
