@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  build-test-deploy:
+  build-test:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -28,14 +28,49 @@ jobs:
         run: chmod +x gradlew
       - name: build-with-gradle
         run: ./gradlew build
+      - name: upload-build-dir
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-dir
+          path: build/
+          retention-days: 7
       - name: run-tests
         run: ./gradlew test
-#      - name: login-to-docker-hub
+      - name: upload-test-results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-dir
+          path: build/test-results/
+          retention-days: 7
+  publish-test-results:
+    runs-on: ubuntu-18.04
+    needs: build-test
+    steps:
+      - name: download-test-results
+        uses: actions/download-artifact@v2
+        with:
+          name: test-results-dir
+      - name: publish-test-results
+        uses: EnricoMi/publish-unit-test-result-action@v1.6
+        if: always() # guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
+        with:
+          report_individual_runs: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: test-results/**/*.xml
+  deploy:
+    runs-on: ubuntu-18.04
+    needs: build-test
+    steps:
+      - name: download-build-results
+        uses: actions/download-artifact@v2
+        with:
+          name: build-dir
+      - name: login-to-docker-hub
 #        if: ${{ github.ref == 'refs/heads/main' }}
-#        uses: docker/login-action@v1
-#        with:
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 #      - name: set-up-docker-buildx
 #        if: ${{ github.ref == 'refs/heads/main' }}
 #        uses: docker/setup-buildx-action@v1
