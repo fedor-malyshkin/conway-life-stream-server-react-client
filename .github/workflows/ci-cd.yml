@@ -50,6 +50,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: test-results-dir
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: publish-test-results
         uses: EnricoMi/publish-unit-test-result-action@v1.6
         if: always() # guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
@@ -71,25 +73,25 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-#      - name: set-up-docker-buildx
+      - name: set-up-docker-buildx
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: docker/setup-buildx-action@v1
+      - name: get-short-sha # https://github.community/t/substring-function/18401
 #        if: ${{ github.ref == 'refs/heads/main' }}
-#        uses: docker/setup-buildx-action@v1
-#      - name: get-short-sha # https://github.community/t/substring-function/18401
+        run: |
+          id=$(echo ${{github.sha}} | cut -b-7)
+          echo "::set-output name=sha::sha-$id"
+        id: get-short-sha-id
+      - name: build-and-push-docker-image
 #        if: ${{ github.ref == 'refs/heads/main' }}
-#        run: |
-#          id=$(echo ${{github.sha}} | cut -b-7)
-#          echo "::set-output name=sha::sha-$id"
-#        id: get-short-sha-id
-#      - name: build-and-push-docker-image
-#        if: ${{ github.ref == 'refs/heads/main' }}
-#        uses: docker/build-push-action@v2
-#        with:
-#          push: true
-#          file: docker/Dockerfile
-#          context: build/libs
-#          tags: |
-#            fedormalyshkin/conway-life-stream-reactor-client:latest
-#            fedormalyshkin/conway-life-stream-reactor-client:${{steps.get-short-sha-id.outputs.sha}}
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          file: docker/Dockerfile
+          context: build/libs
+          tags: |
+            fedormalyshkin/conway-life-stream-reactor-client:latest
+            fedormalyshkin/conway-life-stream-reactor-client:${{steps.get-short-sha-id.outputs.sha}}
 #      - name: set-k8s-context
 #        if: ${{ github.ref == 'refs/heads/main' }}
 #        uses: azure/k8s-set-context@v1
