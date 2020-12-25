@@ -32,7 +32,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-dir
-          path: build/libs
+          path: |
+            build/libs
+            docker/
           retention-days: 7
       - name: run-tests
         run: ./gradlew test
@@ -51,8 +53,6 @@ jobs:
         with:
           name: test-results-dir
           path: build/test-results/  # keep the same structure everywhere
-      - name: Display structure of downloaded files
-        run: ls -R
       - name: publish-test-results
         uses: EnricoMi/publish-unit-test-result-action@v1.6
         if: always() # guarantees that this action always runs, even if earlier steps (e.g., the unit test step) in your workflow fail.
@@ -68,7 +68,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-dir
-          path: build/libs # keep the same structure everywhere
       - name: login-to-docker-hub
 #        if: ${{ github.ref == 'refs/heads/main' }}
         uses: docker/login-action@v1
