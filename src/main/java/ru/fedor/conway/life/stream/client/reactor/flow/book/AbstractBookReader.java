@@ -2,6 +2,8 @@ package ru.fedor.conway.life.stream.client.reactor.flow.book;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ abstract sealed class AbstractBookReader
 				.orElseThrow(() -> new IllegalStateException("Problem with opening: " + bookPath));
 	}
 
+	@PreDestroy
 	private void closeBook() {
 		silentlyClose(buffReader);
 		inputStreamOpt.ifPresent(this::silentlyClose);

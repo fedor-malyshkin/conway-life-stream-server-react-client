@@ -12,7 +12,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>build/conway-life-stream-server-prod.log</file>
+        <file>build/conway-life-stream-reactor-client-prod.log</file>
         <encoder>
             <pattern>[%date{ISO8601}] [%level] [%logger] [%thread] - %msg%n</pattern>
         </encoder>

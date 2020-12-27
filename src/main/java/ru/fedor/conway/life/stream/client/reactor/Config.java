@@ -9,6 +9,8 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
+import ru.fedor.conway.life.stream.client.reactor.flow.life.ConwayServerWebSocketClient;
+import ru.fedor.conway.life.stream.client.reactor.model.Stats;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,5 +39,17 @@ public class Config implements WebFluxConfigurer {
 		handlerMapping.setOrder(1);
 		handlerMapping.setUrlMap(map);
 		return handlerMapping;
+	}
+
+	@Bean
+	public ConwayServerWebSocketClient serverWebSocketClient() {
+		return new ConwayServerWebSocketClient();
+	}
+
+
+		@Bean
+	public Stats stats(ConwayServerWebSocketClient serverWebSocketClient) {
+		System.out.println(serverWebSocketClient);
+		return new Stats(1);
 	}
 }

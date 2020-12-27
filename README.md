@@ -6,6 +6,16 @@ Basic [Reactor](https://projectreactor.io/)-based listening implementation with 
 ## Requirements
 * JDK 15
 
+## Enable netty access to unsafe operations 
+
+Add such keys to your java app
+```ssh
+--add-opens java.base/jdk.internal.misc=ALL-UNNAMED
+-Dio.netty.tryReflectionSetAccessible=true
+--illegal-access=warn
+```
+
+
 ## How to create Docker image locally
 ```shell
 ./gradlew build

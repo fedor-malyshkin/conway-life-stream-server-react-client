@@ -18,19 +18,6 @@ import java.time.Duration;
 @Slf4j
 public class StatsWsHandler implements WebSocketHandler {
 
-	@GetMapping("/snapshot")
-	public Mono<Stats> getStats() {
-		return Mono.just(new Stats(1));
-	}
-
-	public Flux<String> getStatsChain() {
-		BookReaderFlux bookReaderFlux = new BookReaderFlux(BookReaderEng.newInstance());
-
-		return bookReaderFlux.createFluxReader()
-				.take(1000)
-				.map(s -> String.format(" %s ", s));
-	}
-
 	@Override
 	public Mono<Void> handle(WebSocketSession webSocketSession) {
 		BookReaderFlux bookReaderFlux = new BookReaderFlux(BookReaderEng.newInstance());
