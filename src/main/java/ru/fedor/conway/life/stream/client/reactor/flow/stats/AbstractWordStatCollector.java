@@ -1,4 +1,4 @@
-package ru.fedor.conway.life.stream.client.reactor.flow.logic;
+package ru.fedor.conway.life.stream.client.reactor.flow.stats;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -6,6 +6,9 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.Set;
 
+/**
+ * Some games with 'sealed' keywords.
+ */
 @Getter
 public sealed abstract class AbstractWordStatCollector
 		implements IWordStatCollector

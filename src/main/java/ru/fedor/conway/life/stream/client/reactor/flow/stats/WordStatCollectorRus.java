@@ -1,4 +1,4 @@
-package ru.fedor.conway.life.stream.client.reactor.flow.logic;
+package ru.fedor.conway.life.stream.client.reactor.flow.stats;
 
 import java.util.Set;
 

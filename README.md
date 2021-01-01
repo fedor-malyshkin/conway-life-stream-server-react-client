@@ -28,3 +28,7 @@ export CR_PAT=YOUR_TOKEN
 echo $CR_PAT | docker login ghcr.io -u fedor-malyshkin --password-stdin
 docker push ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client:latest
 ```
+
+## Some technicalities
+### netty's epool library
+### use of record and their serialization

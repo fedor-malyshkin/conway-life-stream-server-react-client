@@ -5,7 +5,7 @@ ext {
     COMMONS_MATH_VER = '3.6.1'
     COMMONS_COLL_VER = '4.4'
     EPOLL_NATIVE_VER = '4.1.56.Final'
-    YASSON_VER = '2.0.1'
+    JACKSON_VER = '2.12.0'
 
     LOMBOK_VER = '1.18.16'
 
@@ -72,13 +72,10 @@ dependencies {
     // https://mvnrepository.com/artifact/io.netty/netty-transport-native-epoll
     implementation group: 'io.netty', name: 'netty-transport-native-epoll', version: "${EPOLL_NATIVE_VER}"
 
+    implementation "com.fasterxml.jackson.core:jackson-databind:${JACKSON_VER}"
 
     implementation group: 'org.apache.commons', name: 'commons-math3', version: "${COMMONS_MATH_VER}"
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: "${COMMONS_COLL_VER}"
-
-    // JSON-B (we're going to convert to Java 15's records)
-    implementation group: 'org.eclipse', name: 'yasson', version: "${YASSON_VER}"
-
 
     // Logging
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "${SLF4J_VER}"

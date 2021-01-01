@@ -1,4 +1,4 @@
-package ru.fedor.conway.life.stream.client.reactor.flow.logic;
+package ru.fedor.conway.life.stream.client.reactor.flow.stats;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

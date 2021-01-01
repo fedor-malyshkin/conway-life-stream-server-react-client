@@ -3,7 +3,7 @@ package ru.fedor.conway.life.stream.client.reactor.flow.book;
 public final class BookReaderEng extends AbstractBookReader {
 	private final static String BOOK_PATH_ENG_DEFAULT = "book/war-and-peace-eng.txt";
 
-	public BookReaderEng(String bookPath) {
+	private BookReaderEng(String bookPath) {
 		super(bookPath);
 	}
 

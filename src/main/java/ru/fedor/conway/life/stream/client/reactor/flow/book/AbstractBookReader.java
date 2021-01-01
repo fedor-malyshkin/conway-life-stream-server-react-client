@@ -1,5 +1,6 @@
 package ru.fedor.conway.life.stream.client.reactor.flow.book;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
@@ -9,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-abstract sealed class AbstractBookReader
+public abstract sealed class AbstractBookReader
 		permits BookReaderEng, BookReaderRus {
 	private final String bookPath;
 	private BufferedReader buffReader;
@@ -34,6 +35,7 @@ abstract sealed class AbstractBookReader
 		inputStreamOpt.ifPresent(this::silentlyClose);
 	}
 
+	@Synchronized // protection against subscription from several threads
 	public String nextWord() throws IOException {
 		var wordOpt = pollNextWord();
 		if (wordOpt.isPresent())

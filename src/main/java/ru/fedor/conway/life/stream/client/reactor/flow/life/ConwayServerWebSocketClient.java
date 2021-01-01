@@ -1,7 +1,6 @@
 package ru.fedor.conway.life.stream.client.reactor.flow.life;
 
 import io.netty.channel.ChannelOption;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
@@ -51,7 +50,7 @@ public class ConwayServerWebSocketClient {
 		this.streamServerWsAddress = streamServerWsAddress;
 	}
 
-	void openStream() {
+	public void openStream() {
 		WebSocketClient wsClient = new ReactorNettyWebSocketClient(getHttpClient(), this::getWebSocketClientSpecBuilder);
 
 		Mono<Void> handle = wsClient.execute(
@@ -79,9 +78,7 @@ public class ConwayServerWebSocketClient {
 		}
 	}
 
-	@Getter
 	private class WebSocketHandlerWithCloseSwitch implements WebSocketHandler {
-
 		@Override
 		public Mono<Void> handle(WebSocketSession session) {
 			closeSwitch.set(session.close(CloseStatus.NORMAL));
@@ -113,7 +110,8 @@ public class ConwayServerWebSocketClient {
 	public void close() {
 		log.info("Will stop connection right now.");
 		shouldWeReconnect = false;
-		closeSwitch.get().subscribe();
+		closeSwitch.get()
+				.subscribe();
 		// down the road we will stop
 	}
 
