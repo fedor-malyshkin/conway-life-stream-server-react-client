@@ -1,1 +1,10 @@
-server.port: 8079
+server.port: 8080
+
+source:
+  conway-life-stream-server:
+    ws: ws://localhost:8079/ws
+    reconnect-ms: 1000
+    stats-flush-delay-ms: 1000
+
+book:
+  word-delay-ms: 50
