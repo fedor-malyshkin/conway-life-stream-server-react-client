@@ -18,6 +18,7 @@ results with 2 internal streams and eventually publish the resulting aggregated 
 * [Spring WebFlux](https://spring.io/reactive), documentation [there](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html)
 * Java 15
 * [Java records](https://openjdk.java.net/jeps/359) 
+* [GitHub Container Registry](https://github.com/fedor-malyshkin?tab=packages) - a new Docker image repo from GitHub
 
 ## Requirements
 * JDK 15
