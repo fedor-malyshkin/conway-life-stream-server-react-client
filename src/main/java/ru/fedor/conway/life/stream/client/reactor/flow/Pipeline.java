@@ -1,44 +1,43 @@
 package ru.fedor.conway.life.stream.client.reactor.flow;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
-import reactor.util.function.Tuple3;
+import reactor.util.function.Tuple4;
 import ru.fedor.conway.life.stream.client.reactor.flow.book.AbstractBookReader;
 import ru.fedor.conway.life.stream.client.reactor.flow.book.BookReaderEng;
 import ru.fedor.conway.life.stream.client.reactor.flow.book.BookReaderFlux;
 import ru.fedor.conway.life.stream.client.reactor.flow.book.BookReaderRus;
-import ru.fedor.conway.life.stream.client.reactor.flow.life.ConwayServerJsonParser;
+import ru.fedor.conway.life.stream.client.reactor.flow.life.ConwayServerJsonProcessor;
 import ru.fedor.conway.life.stream.client.reactor.flow.life.ConwayServerWebSocketClient;
 import ru.fedor.conway.life.stream.client.reactor.flow.stats.*;
 
-import javax.annotation.PostConstruct;
 import java.time.Duration;
 
-@RequiredArgsConstructor
 @Getter
 @Slf4j
 public class Pipeline {
 
-	@Value("${book.word-delay-ms}")
-	private int wordDelayMs;
-
-	@Value("${server.conway-life-stream-server.stats-flush-delay-ms}")
-	private int conwayServerStatsFlushDelayMs;
-
 	private final ConwayServerWebSocketClient serverWebSocketClient;
+	private final int conwayServerStatsFlushDelayMs;
+	private final int wordDelayMs;
+
 	private final BookReaderRus bookReaderRus = BookReaderRus.newInstance();
 	private final BookReaderEng bookReaderEng = BookReaderEng.newInstance();
 	private final WordStatCollectorEng wordStatCollectorEng = new WordStatCollectorEng();
 	private final WordStatCollectorRus wordStatCollectorRus = new WordStatCollectorRus();
-	private Flux<Tuple3<ConwayServerStats, WordStats, WordStats>> flux;
+	private Flux<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> flux;
+	private final ConwayServerStatsCollector conwayServerStatsCollector = new ConwayServerStatsCollector();
 
 
-	@PostConstruct
+	public Pipeline(ConwayServerWebSocketClient serverWebSocketClient, int conwayServerStatsFlushDelayMs, int wordDelayMs) {
+		this.serverWebSocketClient = serverWebSocketClient;
+		this.conwayServerStatsFlushDelayMs = conwayServerStatsFlushDelayMs;
+		this.wordDelayMs = wordDelayMs;
+	}
+
 	public void buildAndStartPipeline() {
 		var engFlux = createWordStatFlux(bookReaderEng, wordStatCollectorEng);
 		var rusFlux = createWordStatFlux(bookReaderRus, wordStatCollectorRus);
@@ -46,21 +45,26 @@ public class Pipeline {
 		serverWebSocketClient.openStream();
 		flux = serverWebSocketClient.getFlux()
 				.window(Duration.ofMillis(conwayServerStatsFlushDelayMs))
-				.flatMap(windowFlux -> processBatches(windowFlux, engFlux, rusFlux));
+				.doOnNext(msg -> System.out.println("Got message"))
+				.flatMap(windowFlux -> processBatches(windowFlux, engFlux, rusFlux))
+				.publish()
+				.autoConnect(0);
 	}
 
-	private Mono<Tuple3<ConwayServerStats, WordStats, WordStats>> processBatches(Flux<String> windowFlux, Flux<WordStats> engFlux, Flux<WordStats> rusFlux) {
+	private Mono<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> processBatches(Flux<String> windowFlux, Flux<WordStats> engFlux, Flux<WordStats> rusFlux) {
 		var amount = windowFlux
-				.map(ConwayServerJsonParser::parseEvent)
+				.map(ConwayServerJsonProcessor::parseEvent)
+				.onErrorContinue((e, o) -> {
+				})
 				.collectList()
-				.map(ConwayServerStatsCollector::calculate);
+				.map(conwayServerStatsCollector::calculate);
 		var engStat = engFlux
 				.take(1)
 				.single();
 		var rusStat = rusFlux
 				.take(1)
 				.single();
-		return Mono.zip(amount, engStat, rusStat);
+		return Mono.zip(amount, engStat, rusStat, Mono.just(System.currentTimeMillis()));
 	}
 
 	private <SC extends AbstractWordStatCollector> Flux<WordStats> createWordStatFlux(AbstractBookReader bookReader, SC wordStatCollector) {
@@ -77,6 +81,5 @@ public class Pipeline {
 		sink.next(collector.getStatsAndReset());
 		return collector;
 	}
-
 
 }
