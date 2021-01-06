@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stream-reactor-client-deployment
+  labels:
+    type: deployment
+    app-type: stream-reactor-client
+    side: background
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-id: conway-life-stream-reactor-client
+  template:
+    metadata:
+      labels:
+        app-id: conway-life-stream-reactor-client
+        app-type: stream-reactor-client
+        side: background
+    spec:
+      containers:
+        - name: conway-life-stream-reactor-client
+          image: ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client
+          ports:
+            - name: main-port
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: main-port
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: main-port
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+          env:
+            - name: "STREAM_SERVER_WS_URL"
+              # we need smth like this - ws://localhost:8079/ws
+              value: "ws://stream-server-service/ws"

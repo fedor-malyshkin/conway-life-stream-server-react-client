@@ -2,6 +2,7 @@ package ru.fedor.conway.life.stream.client.reactor.flow;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
@@ -30,6 +31,7 @@ public class Pipeline {
 	private final WordStatCollectorRus wordStatCollectorRus = new WordStatCollectorRus();
 	private Flux<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> flux;
 	private final ConwayServerStatsCollector conwayServerStatsCollector = new ConwayServerStatsCollector();
+	private ConnectableFlux<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> hotFlux;
 
 
 	public Pipeline(ConwayServerWebSocketClient serverWebSocketClient, int conwayServerStatsFlushDelayMs, int wordDelayMs) {
@@ -43,12 +45,13 @@ public class Pipeline {
 		var rusFlux = createWordStatFlux(bookReaderRus, wordStatCollectorRus);
 
 		serverWebSocketClient.openStream();
-		flux = serverWebSocketClient.getFlux()
+		hotFlux = serverWebSocketClient.getFlux()
 				.window(Duration.ofMillis(conwayServerStatsFlushDelayMs))
-				.doOnNext(msg -> System.out.println("Got message"))
+				// .doOnNext(msg -> System.out.println("Got message"))
 				.flatMap(windowFlux -> processBatches(windowFlux, engFlux, rusFlux))
-				.publish()
-				.autoConnect(0);
+				.publish();
+
+		flux = hotFlux.autoConnect(0);
 	}
 
 	private Mono<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> processBatches(Flux<String> windowFlux, Flux<WordStats> engFlux, Flux<WordStats> rusFlux) {

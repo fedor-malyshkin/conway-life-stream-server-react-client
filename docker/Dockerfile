@@ -15,4 +15,4 @@ RUN groupadd -r runuser && useradd -r -s /bin/false -g runuser runuser
 RUN chown -R runuser:runuser  /opt/conway-life/
 USER runuser
 
-CMD java --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true --illegal-access=warn $JAVA_OPTS -Dfile.encoding=UTF-8 -jar conway-life-stream-reactor-client-boot.jar $JAVA_ARGS
+CMD java --enable-preview --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true --illegal-access=warn $JAVA_OPTS -Dfile.encoding=UTF-8 -jar conway-life-stream-reactor-client-boot.jar $JAVA_ARGS

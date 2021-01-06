@@ -2,7 +2,7 @@ server.port: 8080
 
 source:
   conway-life-stream-server:
-    ws: ws://localhost:8079/ws
+    ws: ${STREAM_SERVER_WS_URL:ws://localhost:8079/ws}
     reconnect-ms: 1000
     stats-flush-delay-ms: 1000
 
