@@ -70,7 +70,7 @@ dependencies {
     implementation platform("io.projectreactor:reactor-bom:${REACTOR_VER}")
     implementation 'io.projectreactor:reactor-core'
     // https://mvnrepository.com/artifact/io.netty/netty-transport-native-epoll
-    implementation group: 'io.netty', name: 'netty-transport-native-epoll', version: "${EPOLL_NATIVE_VER}"
+    implementation "io.netty:netty-transport-native-epoll:${EPOLL_NATIVE_VER}:linux-x86_64"
 
     implementation "com.fasterxml.jackson.core:jackson-databind:${JACKSON_VER}"
 

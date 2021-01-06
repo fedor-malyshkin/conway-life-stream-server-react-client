@@ -13,7 +13,7 @@ import ru.fedor.conway.life.stream.client.reactor.flow.stats.ConwayServerStats;
 
 @RestController
 @Slf4j
-public class StatsWsHandler {
+public class StatsController {
 
 	@Autowired
 	private Pipeline pipeline;
