@@ -74,12 +74,12 @@ dependencies {
 
     implementation "com.fasterxml.jackson.core:jackson-databind:${JACKSON_VER}"
 
-    implementation group: 'org.apache.commons', name: 'commons-math3', version: "${COMMONS_MATH_VER}"
-    implementation group: 'org.apache.commons', name: 'commons-collections4', version: "${COMMONS_COLL_VER}"
+    implementation group: 'org.apache.commons', name: 'commons-math3', version: COMMONS_MATH_VER
+    implementation group: 'org.apache.commons', name: 'commons-collections4', version: COMMONS_COLL_VER
 
     // Logging
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: "${SLF4J_VER}"
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: "${LOGBACK_VER}"
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: SLF4J_VER
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: LOGBACK_VER
 
     // spring testing
     testImplementation "org.springframework.boot:spring-boot-starter-test:${SPRING_VER}"

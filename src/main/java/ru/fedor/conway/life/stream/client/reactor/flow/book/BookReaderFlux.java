@@ -7,17 +7,12 @@ import java.io.IOException;
 
 @Slf4j
 public class BookReaderFlux {
-	private final AbstractBookReader bookReader;
 
-	public BookReaderFlux(AbstractBookReader bookReader) {
-		this.bookReader = bookReader;
+	public static Flux<String> createFluxReader(AbstractBookReader bookReader) {
+		return Flux.generate(() -> bookReader, BookReaderFlux::getNextWordAndReturnState);
 	}
 
-	public Flux<String> createFluxReader() {
-		return Flux.generate(() -> bookReader, this::getNextWordAndReturnState);
-	}
-
-	private AbstractBookReader getNextWordAndReturnState(AbstractBookReader reader, reactor.core.publisher.SynchronousSink<String> sink) {
+	private static AbstractBookReader getNextWordAndReturnState(AbstractBookReader reader, reactor.core.publisher.SynchronousSink<String> sink) {
 		try {
 			sink.next(reader.nextWord());
 		} catch (IOException e) {

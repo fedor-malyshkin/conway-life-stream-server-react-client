@@ -21,8 +21,6 @@ public class StatsController {
 	@GetMapping(value = "/stats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<String> produceStatsStream() {
 		return pipeline.getFlux()
-				// .map(tpl -> tpl.getT1() + " : " + tpl.getT2().countOfWords() + " : " + tpl.getT3().countOfWords() + " : " + tpl.getT4() + " : " + tpl.hashCode());
-				.map(Tuple2::getT1)
 				.map(ConwayServerJsonProcessor::toJson);
 	}
 }
