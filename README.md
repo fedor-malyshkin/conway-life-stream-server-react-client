@@ -14,7 +14,7 @@ An oversimplified version of stream can be illustrated there:
 ![animation](docs/images/animation.gif)
 
 ## Article
-* [Manage data streams with Reactor Project](https://medium.com/@fedor-malyshkin/manage-data-streams-with-reactor-project)
+* [Manage data streams with Reactor Project](https://fedor-malyshkin.medium.com/manage-data-streams-with-reactor-project-da56922a8c4c)
 
 ## Used technologies
 * [Reactor library](https://projectreactor.io/)
