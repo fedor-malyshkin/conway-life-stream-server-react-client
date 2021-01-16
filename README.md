@@ -1,16 +1,20 @@
-# conway-life-stream-reactor-client
 ![ci-cd](https://github.com/fedor-malyshkin/conway-life-stream-reactor-client/workflows/ci-cd/badge.svg)
+# conway-life-stream-reactor-client
 
 ## Overview
-A basic stream aggregator that is built with help of [Reactor](https://projectreactor.io/) (a fourth-generation reactive library, based on the Reactive Streams
+A basic stream aggregator that is built with help of [Reactor Project](https://projectreactor.io/) (a fourth-generation reactive library, based on the Reactive Streams
 specification, for building non-blocking applications on the JVM).
 
 This application is developed to be deployed in Kubernetes cluster, listen to the stream from other similar service
 [conway-life-stream-server](https://github.com/fedor-malyshkin/conway-life-stream-server) (deployed in the same cluster) and aggregates
 results with 2 internal streams and eventually publish the resulting aggregated stream through the single HTTP endpoint.
 
+An oversimplified version of stream can be illustrated there:
+
+![animation](docs/images/animation.gif)
+
 ## Article
-* TBD
+* [Manage data streams with Reactor Project](https://medium.com/@fedor-malyshkin/manage-data-streams-with-reactor-project)
 
 ## Used technologies
 * [Reactor library](https://projectreactor.io/)
@@ -97,3 +101,67 @@ implementation "io.netty:netty-transport-native-epoll:${EPOLL_NATIVE_VER}:linux-
 It requires pay a close attention to version of serializer you use as support for java records has been added 
 recently enough.
 
+### Output format
+```json
+{
+  "conwayCountOfAlive": 261,
+  "conwayCountOfDead": 4739,
+  "engVowelsStat": {
+    "mean": 1.6,
+    "variance": 0.46315789473684216,
+    "standardDeviation": 0.6805570473787206,
+    "max": 3.0,
+    "min": 1.0,
+    "n": 20,
+    "sum": 32.0
+  },
+  "engConsonantsStat": {
+    "mean": 2.0,
+    "variance": 0.9473684210526315,
+    "standardDeviation": 0.9733285267845752,
+    "max": 5.0,
+    "min": 1.0,
+    "n": 20,
+    "sum": 40.0
+  },
+  "engLengthStat": {
+    "mean": 3.6,
+    "variance": 2.0421052631578944,
+    "standardDeviation": 1.429022485182754,
+    "max": 8.0,
+    "min": 2.0,
+    "n": 20,
+    "sum": 72.0
+  },
+  "engCountOfWords": 20,
+  "rusVowelsStat": {
+    "mean": 2.05,
+    "variance": 1.628947368421053,
+    "standardDeviation": 1.2763022245616642,
+    "max": 5.0,
+    "min": 0.0,
+    "n": 20,
+    "sum": 41.0
+  },
+  "rusConsonantsStat": {
+    "mean": 3.75,
+    "variance": 4.197368421052632,
+    "standardDeviation": 2.0487480130686233,
+    "max": 7.0,
+    "min": 0.0,
+    "n": 20,
+    "sum": 75.0
+  },
+  "rusLengthStat": {
+    "mean": 5.8,
+    "variance": 9.43157894736842,
+    "standardDeviation": 3.071087583799658,
+    "max": 10.0,
+    "min": 1.0,
+    "n": 20,
+    "sum": 116.0
+  },
+  "rusCountOfWords": 20,
+  "mills": 1610570220753
+}
+```

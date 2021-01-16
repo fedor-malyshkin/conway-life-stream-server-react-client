@@ -28,7 +28,7 @@ class ConwayServerWebSocketClientTest {
 		ConwayServerWebSocketClient t = new ConwayServerWebSocketClient("ws://localhost:8079/ws");
 		var p = new Pipeline(t, 5000, 50);
 		p.buildAndStartPipeline();
-		p.getFlux().subscribe(tpl -> System.out.println(tpl.getT1() + " : " + tpl.getT2().countOfWords() + " : " + tpl.getT3().countOfWords()));
+		p.getFlux().subscribe(System.out::println);
 		Thread.sleep(50 * 1_000);
 		t.close();
 	}

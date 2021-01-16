@@ -85,7 +85,6 @@ public class ConwayServerWebSocketClient {
 			return session.receive()
 					.map(WebSocketMessage::getPayloadAsText)
 					.doOnNext(responseSink::tryEmitNext)
-					// .doOnComplete(responseSink::tryEmitComplete)
 					.doOnError(responseSink::tryEmitError)
 					.then();
 		}

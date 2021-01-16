@@ -29,9 +29,9 @@ public class Pipeline {
 	private final BookReaderEng bookReaderEng = BookReaderEng.newInstance();
 	private final WordStatCollectorEng wordStatCollectorEng = new WordStatCollectorEng();
 	private final WordStatCollectorRus wordStatCollectorRus = new WordStatCollectorRus();
-	private Flux<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> flux;
+	private Flux<AggregatedStats> flux;
 	private final ConwayServerStatsCollector conwayServerStatsCollector = new ConwayServerStatsCollector();
-	private ConnectableFlux<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> hotFlux;
+	private ConnectableFlux<AggregatedStats> hotFlux;
 
 
 	public Pipeline(ConwayServerWebSocketClient serverWebSocketClient, int conwayServerStatsFlushDelayMs, int wordDelayMs) {
@@ -47,8 +47,8 @@ public class Pipeline {
 		serverWebSocketClient.openStream();
 		hotFlux = serverWebSocketClient.getFlux()
 				.window(Duration.ofMillis(conwayServerStatsFlushDelayMs))
-				// .doOnNext(msg -> System.out.println("Got message"))
 				.flatMap(windowFlux -> processBatches(windowFlux, engFlux, rusFlux))
+				.map(tp -> AggregatedStats.create(tp.getT1(), tp.getT2(), tp.getT3(), tp.getT4()))
 				.publish();
 
 		flux = hotFlux.autoConnect(0);
@@ -57,8 +57,6 @@ public class Pipeline {
 	private Mono<Tuple4<ConwayServerStats, WordStats, WordStats, Long>> processBatches(Flux<String> windowFlux, Flux<WordStats> engFlux, Flux<WordStats> rusFlux) {
 		var amount = windowFlux
 				.map(ConwayServerJsonProcessor::parseEvent)
-				.onErrorContinue((e, o) -> {
-				})
 				.collectList()
 				.map(conwayServerStatsCollector::calculate);
 		var engStat = engFlux
@@ -71,9 +69,8 @@ public class Pipeline {
 	}
 
 	private <SC extends AbstractWordStatCollector> Flux<WordStats> createWordStatFlux(AbstractBookReader bookReader, SC wordStatCollector) {
-		BookReaderFlux bookReaderFlux = new BookReaderFlux(bookReader);
 		var collectorSync = new WordStatsCollectorSynchronizedDecorator<>(wordStatCollector);
-		bookReaderFlux.createFluxReader()
+		BookReaderFlux.createFluxReader(bookReader)
 				.delayElements(Duration.ofMillis(wordDelayMs))
 				.subscribe(collectorSync::analyse);
 

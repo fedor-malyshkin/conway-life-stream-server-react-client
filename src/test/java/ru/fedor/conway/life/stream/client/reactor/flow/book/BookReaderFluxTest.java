@@ -6,19 +6,17 @@ import reactor.test.StepVerifier;
 
 class BookReaderFluxTest {
 
-
-	private BookReaderFlux testable;
+	private BookReaderEng reader;
 
 	@BeforeEach
 	public void setUp() {
-		var reader = BookReaderEng.newInstance("book/war-and-peace-eng-short.txt");
-		testable = new BookReaderFlux(reader);
+		reader = BookReaderEng.newInstance("book/war-and-peace-eng-short.txt");
 	}
-
 
 	@Test
 	public void testFlow() {
-		var step = StepVerifier.create(testable.createFluxReader().take(5))
+		var step = StepVerifier.create(BookReaderFlux.createFluxReader(reader)
+				.take(5))
 				.expectNext("so")
 				.expectNext("spoke")
 				.expectNext("in")

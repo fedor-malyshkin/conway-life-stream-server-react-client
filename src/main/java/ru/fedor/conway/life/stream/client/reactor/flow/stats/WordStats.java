@@ -1,9 +1,9 @@
 package ru.fedor.conway.life.stream.client.reactor.flow.stats;
 
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
-public record WordStats(SummaryStatistics vowelsStat,
-						SummaryStatistics consonantsStat,
-						SummaryStatistics lengthStat,
+public record WordStats(StatisticalSummary vowelsStat,
+						StatisticalSummary consonantsStat,
+						StatisticalSummary lengthStat,
 						int countOfWords) {
 }
