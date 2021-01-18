@@ -102,4 +102,4 @@ jobs:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
       - name: rollup-update-k8s
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: kubectl set image deployment/stream-reactor-client-deployment conway-life-stream-reactor-client=ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client:latest:${{steps.get-short-sha-id.outputs.sha}}
+        run: kubectl set image deployment/stream-reactor-client-deployment conway-life-stream-reactor-client=ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client:${{steps.get-short-sha-id.outputs.sha}}
