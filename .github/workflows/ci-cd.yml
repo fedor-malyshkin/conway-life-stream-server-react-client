@@ -94,12 +94,12 @@ jobs:
           tags: |
             ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client:latest
             ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client:${{steps.get-short-sha-id.outputs.sha}}
-#      - name: set-k8s-context
-#        if: ${{ github.ref == 'refs/heads/main' }}
-#        uses: azure/k8s-set-context@v1
-#        with:
-#          method: kubeconfig
-#          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-#      - name: rollup-update-k8s
-#        if: ${{ github.ref == 'refs/heads/main' }}
-#        run: kubectl set image deployment/stream-reactor-client-deployment conway-life-stream-reactor-client=ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client:latest:${{steps.get-short-sha-id.outputs.sha}}
+      - name: set-k8s-context
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      - name: rollup-update-k8s
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: kubectl set image deployment/stream-reactor-client-deployment conway-life-stream-reactor-client=ghcr.io/fedor-malyshkin/conway-life-stream-reactor-client:latest:${{steps.get-short-sha-id.outputs.sha}}
